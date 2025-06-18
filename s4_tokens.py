@@ -22,8 +22,10 @@ def split_sentences(text):
     return [s.strip() for s in sentences if s.strip()]
 
 def tokenize_sentence(sentence):
-    # Самый простой токенизатор: слова и числа, французские/русские кавычки и дефисы отделяются
-    tokens = re.findall(r"\b\w+\b|[.,!?;:«»\"'“”‘’\-–—()]", sentence, re.UNICODE)
+    # Выделяем слова и пунктуацию
+    raw_tokens = re.findall(r"\b\w+\b|[.,!?;:«»\"'“”‘’\-–—()]", sentence, re.UNICODE)
+    # Оставляем только те токены, которые не состоят только из цифр
+    tokens = [token for token in raw_tokens if not token.isdigit()]
     return tokens
 
 def process_file(infile, outfile):
