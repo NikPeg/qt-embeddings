@@ -29,8 +29,8 @@ def is_tatar_word(word, tokenizer, model):
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     outputs = model.generate(
         **inputs,
-        max_new_tokens=150,
-        do_sample=True,
+        max_new_tokens=50,
+        do_sample=False,
         temperature=0.7,
         top_p=0.95,
         eos_token_id=tokenizer.eos_token_id,
