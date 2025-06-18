@@ -6,7 +6,7 @@ from collections import Counter
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-LEMMATIZER_DIR = 'turkish_lemmatizer'  # Папка, где лежит lemmatizer.py и revisedDict.pkl
+LEMMATIZER_DIR = 'Turkish-Lemmatizer'  # Папка, где лежит lemmatizer.py и revisedDict.pkl
 REVISED_PICKLE = os.path.join(LEMMATIZER_DIR, 'revisedDict.pkl')
 DEEPSEEK_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
 
