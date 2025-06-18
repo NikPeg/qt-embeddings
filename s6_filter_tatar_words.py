@@ -47,12 +47,12 @@ def is_tatar_word(word, tokenizer, model):
         pad_token_id=tokenizer.eos_token_id
     )
     full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    postprocessed = process_llm_response(full_response)
+    postprocessed = process_llm_response(full_response[len(prompt):])
     log(f"[DEEPSEEK Q] {word}")
     log(f"  [RAW RESPONSE]: {full_response!r}")
     log(f"  [POSTPROCESSED]: {postprocessed!r}")
     answer = postprocessed.lower()
-    return 'татар' in answer
+    res = 'татар' in answer or 'tatar' in answer
 
 def main():
     log("Загружаем DeepSeek...")
