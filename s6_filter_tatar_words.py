@@ -42,7 +42,7 @@ def is_tatar_word(word, tokenizer, model):
     outputs = model.generate(
         **inputs,
         max_new_tokens=50,
-        do_sample=False,
+        do_sample=True,
         eos_token_id=tokenizer.eos_token_id,
         pad_token_id=tokenizer.eos_token_id
     )
