@@ -6,6 +6,8 @@ IN_FILE = "unknown_lemmas.txt"
 OUT_FILE = "words.txt"
 DEEPSEEK_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
 
+FREQ_THRESHOLD = 2
+
 def log(msg):
     print(f"[LOG] {msg}")
 
@@ -20,6 +22,15 @@ def load_deepseek():
     )
     return tokenizer, model
 
+def process_llm_response(response):
+    # Берём текст после </think> если такой тег есть
+    idx = response.find("</think>")
+    if idx != -1:
+        result = response[idx + len("</think>"):].strip()
+    else:
+        result = response.strip()
+    return result
+
 def is_tatar_word(word, tokenizer, model):
     prompt = (
         "Перед тобой слово из текста. Ответь одним словом (без кавычек): 'татарский', если это крымскотатарское слово, или 'русский', если это русское слово.\n"
@@ -29,16 +40,18 @@ def is_tatar_word(word, tokenizer, model):
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     outputs = model.generate(
         **inputs,
-        max_new_tokens=50,
+        max_new_tokens=8,
         do_sample=False,
-        temperature=0.7,
-        top_p=0.95,
         eos_token_id=tokenizer.eos_token_id,
         pad_token_id=tokenizer.eos_token_id
     )
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    answer = (response.split("Ответ:")[-1].strip() or response.strip()).lower()
-    log(f"[DEEPSEEK Q] {word} -> {answer}")
+    full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    postprocessed = process_llm_response(full_response)
+    log(f"[DEEPSEEK Q] {word}")
+    log(f"  [RAW RESPONSE]: {full_response!r}")
+    log(f"  [POSTPROCESSED]: {postprocessed!r}")
+
+    answer = postprocessed.lower()
     return 'татар' in answer
 
 def main():
@@ -51,12 +64,19 @@ def main():
         for line in fin:
             if not line.strip():
                 continue
-            word = line.split('\t')[0].strip()
-            if word.isalpha():
+            parts = line.strip().split('\t')
+            if len(parts) < 2:
+                continue
+            word = parts[0].strip()
+            try:
+                freq = int(parts[1])
+            except Exception:
+                continue
+            if word.isalpha() and freq > FREQ_THRESHOLD:
                 words_to_check.append(word)
 
     total = len(words_to_check)
-    log(f"Всего уникальных слов для проверки: {total}")
+    log(f"Всего уникальных слов для проверки (частота>{FREQ_THRESHOLD}): {total}")
     tatar_words = []
 
     for i, word in enumerate(words_to_check, 1):
