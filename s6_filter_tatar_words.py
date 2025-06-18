@@ -31,12 +31,11 @@ def process_llm_response(response):
 
 def is_tatar_word(word, tokenizer, model):
     prompt = (
-        "Перед тобой слово из текста. Ответь одним словом: "
-        "татарский, если это крымскотатарское слово, "
-        "русский, если это русское слово, "
-        "или другой, если это не русское и не крымскотатарское слово. "
-        f"Слово: {word} "
-        "Ответ:"
+        """Алдыңда мәтиндин бир сөз бар. Бир сөз (тырнақларсыз) билән жавап бер: 
+        "е" — әгер бу сөз къырымтатарджа олувса, 
+        "йоқ" — әгер бу сөз къырымтатар тилине аит олмаса. 
+        Сөз: {word} 
+        Жавап:"""
     )
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     outputs = model.generate(
@@ -52,7 +51,7 @@ def is_tatar_word(word, tokenizer, model):
     log(f"  [RAW RESPONSE]: {full_response!r}")
     log(f"  [POSTPROCESSED]: {postprocessed!r}")
     answer = postprocessed.lower()
-    res = 'татар' in answer or 'tatar' in answer
+    res = 'йоқ' not in answer
     log(f"  [QT-WORD]: {res}")
     return res
 
