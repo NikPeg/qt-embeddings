@@ -42,3 +42,10 @@ Transformed lexicon is saved to revisedDict.pkl
 у	6718
 ...
 
+zeyrek:
+[LOG] === Лемматизация завершена ===
+[LOG] Всего обработано слов: 3157286
+[LOG] Изменённых лемм: 87960 (2.79%)
+[LOG] Неузнанных слов: 27667 (см. unknown_lemmas_zeyrek.txt)
+[LOG] Результаты сохранены в LemmatizedQirimTatarTexts_Zeyrek
+[LOG] Файл неизвестных лемм с частотами записан в unknown_lemmas_zeyrek.txt
