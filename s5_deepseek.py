@@ -3,7 +3,6 @@ import pickle
 import sys
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from collections import Counter
 
 # Turkish Lemmatizer settings
 LEMMATIZER_DIR = 'Turkish-Lemmatizer'
@@ -14,7 +13,12 @@ DEEPSEEK_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
 
 def load_lemmatizer():
     sys.path.append(LEMMATIZER_DIR)
-    from lemmatizer import findPos
+    sys.path.append(LEMMATIZER_DIR)
+    try:
+        from lemmatizer import findPos
+    except ImportError as e:
+        print(f"Ошибка импорта lemmatizer.py: {e}")
+        return
     with open(REVISED_PICKLE, 'rb') as f:
         revisedDict = pickle.load(f)
     return findPos, revisedDict
