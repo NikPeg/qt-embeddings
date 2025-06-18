@@ -5,11 +5,10 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 IN_FILE = "unknown_lemmas.txt"
 OUT_FILE = "words.txt"
 DEEPSEEK_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
-
 FREQ_THRESHOLD = 2
 
 def log(msg):
-    print(f"[LOG] {msg}")
+    print(msg)
 
 def load_deepseek():
     tokenizer = AutoTokenizer.from_pretrained(DEEPSEEK_MODEL)
@@ -23,7 +22,6 @@ def load_deepseek():
     return tokenizer, model
 
 def process_llm_response(response):
-    # Берём текст после </think> если такой тег есть
     idx = response.find("</think>")
     if idx != -1:
         result = response[idx + len("</think>"):].strip()
@@ -43,21 +41,18 @@ def is_tatar_word(word, tokenizer, model):
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     outputs = model.generate(
         **inputs,
-        max_new_tokens=100,
-        do_sample=True,
+        max_new_tokens=50,
+        do_sample=False,
         eos_token_id=tokenizer.eos_token_id,
         pad_token_id=tokenizer.eos_token_id
     )
     full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    postprocessed = process_llm_response(full_response[len(prompt):])
+    postprocessed = process_llm_response(full_response)
     log(f"[DEEPSEEK Q] {word}")
     log(f"  [RAW RESPONSE]: {full_response!r}")
     log(f"  [POSTPROCESSED]: {postprocessed!r}")
-
     answer = postprocessed.lower()
-    res = 'татар' in answer or 'tatar' in answer
-    log(f"  [RESULT]: {res}")
-    return res
+    return 'татар' in answer
 
 def main():
     log("Загружаем DeepSeek...")
@@ -82,19 +77,16 @@ def main():
 
     total = len(words_to_check)
     log(f"Всего уникальных слов для проверки (частота>{FREQ_THRESHOLD}): {total}")
-    tatar_words = []
-
-    for i, word in enumerate(words_to_check, 1):
-        if is_tatar_word(word, tokenizer, model):
-            tatar_words.append(word)
-        if i % 10 == 0 or i == total:
-            log(f"Обработано: {i} / {total} (Осталось: {total-i})")
 
     with open(OUT_FILE, "w", encoding="utf-8") as fout:
-        for w in tatar_words:
-            fout.write(w + "\n")
+        for i, word in enumerate(words_to_check, 1):
+            if is_tatar_word(word, tokenizer, model):
+                fout.write(word + "\n")
+                fout.flush()
+            if i % 10 == 0 or i == total:
+                log(f"Обработано: {i} / {total} (Осталось: {total-i})")
 
-    log(f"Записано {len(tatar_words)} крымскотатарских слов в {OUT_FILE}")
+    log(f"Результаты сохранены в {OUT_FILE}")
 
 if __name__ == "__main__":
     main()
