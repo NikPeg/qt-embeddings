@@ -36,9 +36,8 @@ def is_tatar_word(word, tokenizer, model):
     )
     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
     answer = (response.split("Ответ:")[-1].strip() or response.strip()).lower()
-    if 'татар' in answer:
-        return True
-    return False
+    log(f"[DEEPSEEK Q] {word} -> {answer}")
+    return 'татар' in answer
 
 def main():
     log("Загружаем DeepSeek...")
@@ -50,17 +49,19 @@ def main():
         for line in fin:
             if not line.strip():
                 continue
-            word = line.split('\t')[0].strip()   # если словарь типа <word>\t<count>
+            word = line.split('\t')[0].strip()
             if word.isalpha():
                 words_to_check.append(word)
 
-    log(f"Всего уникальных слов для проверки: {len(words_to_check)}")
+    total = len(words_to_check)
+    log(f"Всего уникальных слов для проверки: {total}")
     tatar_words = []
+
     for i, word in enumerate(words_to_check, 1):
         if is_tatar_word(word, tokenizer, model):
             tatar_words.append(word)
-        if i % 20 == 0:
-            log(f"Обработано: {i} / {len(words_to_check)} ... Татарских найдено: {len(tatar_words)}")
+        if i % 10 == 0 or i == total:
+            log(f"Обработано: {i} / {total} (Осталось: {total-i})")
 
     with open(OUT_FILE, "w", encoding="utf-8") as fout:
         for w in tatar_words:
