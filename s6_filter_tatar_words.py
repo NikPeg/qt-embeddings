@@ -33,8 +33,8 @@ def process_llm_response(response):
 
 def is_tatar_word(word, tokenizer, model):
     prompt = (
-        "Перед тобой слово из текста. Ответь одним словом: татарский, если это крымскотатарское слово, или русский, если это русское слово.\n"
-        f"Слово: {word}\n"
+        "Перед тобой слово из текста. Ответь одним словом: татарский, если это крымскотатарское слово, или русский, если это русское слово. "
+        f"Слово: {word} "
         "Ответ:"
     )
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
@@ -52,7 +52,9 @@ def is_tatar_word(word, tokenizer, model):
     log(f"  [POSTPROCESSED]: {postprocessed!r}")
 
     answer = postprocessed.lower()
-    return 'татар' in answer
+    res = 'татар' in answer or 'tatar' in answer
+    log(f"  [RESULT]: {res}")
+    return res
 
 def main():
     log("Загружаем DeepSeek...")
