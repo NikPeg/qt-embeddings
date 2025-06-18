@@ -89,6 +89,11 @@ def process_words(words, findPos, revisedDict, tokenizer, model):
     return results, tatar_count, russian_count, unknown_count
 
 def main():
+    with open("unknown_lemmas.txt", encoding="utf-8") as fin, open("words.txt", "w", encoding="utf-8") as fout:
+        for line in fin:
+            word = line.strip().split()[0]
+            fout.write(word + "\n")
+
     # ------ Пути к входу/выходу ------
     input_file = "words.txt"                  # один токен в строке
     output_file = "word_filter_output.tsv"
