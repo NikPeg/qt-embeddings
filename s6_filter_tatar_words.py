@@ -33,20 +33,20 @@ def process_llm_response(response):
 
 def is_tatar_word(word, tokenizer, model):
     prompt = (
-        "Перед тобой слово из текста. Ответь одним словом (без кавычек): 'татарский', если это крымскотатарское слово, или 'русский', если это русское слово.\n"
+        "Перед тобой слово из текста. Ответь одним словом: татарский, если это крымскотатарское слово, или русский, если это русское слово.\n"
         f"Слово: {word}\n"
         "Ответ:"
     )
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     outputs = model.generate(
         **inputs,
-        max_new_tokens=8,
-        do_sample=False,
+        max_new_tokens=50,
+        do_sample=True,
         eos_token_id=tokenizer.eos_token_id,
         pad_token_id=tokenizer.eos_token_id
     )
     full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    postprocessed = process_llm_response(full_response)
+    postprocessed = process_llm_response(full_response[len(prompt):])
     log(f"[DEEPSEEK Q] {word}")
     log(f"  [RAW RESPONSE]: {full_response!r}")
     log(f"  [POSTPROCESSED]: {postprocessed!r}")
