@@ -2,3 +2,43 @@
 Обработано файлов: 123
 Всего токенизированных предложений: 309334
 Результаты сохранены в: TokenizedQirimTatarTexts
+
+Negative verbs are added.
+Zero infinitive forms of verbs are added.
+Consonant softening forms are added.
+Dropping vowel forms are added.
+Becoming close vowel forms are added.
+Transformed lexicon is saved to revisedDict.pkl
+
+[LOG] === Лемматизация завершена ===
+[LOG] Всего файлов обработано: 123
+[LOG] Всего строк обработано: 309334
+[LOG] Лемматизированные тексты сохранены в LemmatizedQirimTatarTexts
+
+[LOG] === Лемматизация завершена ===
+[LOG] Всего обработано слов: 3157286
+[LOG] Изменённых лемм: 804345 (25.48%)
+[LOG] Неузнанных слов: 14412 (см. unknown_lemmas.txt)
+[LOG] Результаты сохранены в LemmatizedQirimTatarTexts
+[LOG] Файл неизвестных лемм с частотами записан в unknown_lemmas.txt
+ве	54968
+бир	24947
+халкъ	19121
+эди	17099
+бу	16647
+агъыз	12810
+де	12364
+да	11186
+ичюн	10840
+дей	10552
+о	10354
+олгъан	9537
+не	8423
+ким	8355
+фольклор	8123
+в	7919
+боюнджа	7555
+экен	6818
+у	6718
+...
+

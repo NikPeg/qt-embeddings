@@ -1,4 +1,6 @@
 QirimTatarTexts/*
 CleanQirimTatarTexts/*
 TokenizedQirimTatarTexts/*
-./idea
+./idea/*
+LemmatizedQirimTatarTexts/*
+.idea/vcs.xml

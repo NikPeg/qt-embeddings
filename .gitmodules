@@ -1,0 +1,3 @@
+[submodule "Turkish-Lemmatizer"]
+	path = Turkish-Lemmatizer
+	url = https://github.com/akoksal/Turkish-Lemmatizer.git
