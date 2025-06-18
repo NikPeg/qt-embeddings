@@ -53,6 +53,8 @@ def is_tatar_word(word, tokenizer, model):
     log(f"  [POSTPROCESSED]: {postprocessed!r}")
     answer = postprocessed.lower()
     res = 'татар' in answer or 'tatar' in answer
+    log(f"  [QT-WORD]: {res}")
+    return res
 
 def main():
     log("Загружаем DeepSeek...")
