@@ -34,7 +34,7 @@ def is_tatar_word(word, tokenizer, model):
         'Алдыңда мәтиндин бир сөз бар. Бир сөз билән жавап бер: '
         '"е" — әгер бу сөз къырымтатарджа олувса, '
         '"йоқ" — әгер бу сөз къырымтатар тилине аит олмаса. '
-        'Сөз: {word} '
+        f'Сөз: {word} '
         'Жавап:'
     )
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
