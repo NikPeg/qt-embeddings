@@ -1,61 +1,74 @@
 import os
 import pickle
 
-# Файлы и папки
-WORDS_FILE = "words.txt"
-TEXTS_DIR = "TokenizedQirimTatarTexts"
-LEMMATIZER_DIR = 'turkish_lemmatizer'
+LEMMATIZED_DIR = "LemmatizedQirimTatarTexts"
+WORDS_FILE = "words.txt"  # вручную отвалидированные крымскотатарские слова
+LEMMATIZER_DIR = 'Turkish-Lemmatizer'
 REVISED_PICKLE = os.path.join(LEMMATIZER_DIR, 'revisedDict.pkl')
-PKL_OUT = "ktatar_dict.pkl"
+PKL_OUT = "ktatar_final_dict.pkl"
 
-def get_forms_for_words(words_set, texts_dir):
-    """Для каждого слова из words_set ищет формы-употребления в корпусе."""
-    forms = {w: set() for w in words_set}
-    for root, _, files in os.walk(texts_dir):
+def log(msg):
+    print(f"[LOG] {msg}")
+
+def load_manual_words(words_file):
+    # Множество слов, которые были вручную признаны крымскотатарскими
+    with open(words_file, encoding='utf-8') as f:
+        words = {line.strip() for line in f if line.strip()}
+    return words
+
+def get_all_forms_from_texts(text_dir):
+    forms = set()
+    for root, _, files in os.walk(text_dir):
         for fname in files:
             if fname.lower().endswith(".txt"):
-                with open(os.path.join(root, fname), encoding="utf-8") as fin:
+                with open(os.path.join(root, fname), encoding='utf-8') as fin:
                     for line in fin:
                         for tok in line.strip().split():
-                            if tok in forms:
-                                forms[tok].add(tok)
+                            if tok.isalpha():
+                                forms.add(tok)
     return forms
 
-def find_best_lemma(form, findPos, revisedDict):
+def lemmatize_with_turkish_lemmatizer(form, findPos, revisedDict):
     findings = findPos(form.lower(), revisedDict)
     if findings:
-        return findings[0][0].split('_')[0]
-    else:
-        return form  # fallback: если вообще ничего не нашли
+        lemma = findings[0][0].split('_')[0]
+        return lemma
+    return None
 
 def main():
-    # --- Считать слова ---
-    with open(WORDS_FILE, encoding="utf-8") as f:
-        target_words = {line.strip() for line in f if line.strip()}
+    # --- Шаг 1: собрать вручную валидированные крымскотатарские слова ---
+    manual_words = load_manual_words(WORDS_FILE)
+    log(f"Загружено вручную определённых крымскотатарских слов: {len(manual_words)}")
 
-    # --- Собрать все варианты употребления этих слов (вдруг формы разные) ---
-    forms_dict = get_forms_for_words(target_words, TEXTS_DIR)
+    # --- Шаг 2: собрать все слова из лемматизированного корпуса ---
+    all_forms = get_all_forms_from_texts(LEMMATIZED_DIR)
+    log(f"В корпусе найдено уникальных слов: {len(all_forms)}")
 
-    # --- Подключить турецкий лемматизатор ---
+    # --- Шаг 3: подключить Turkish-Lemmatizer ---
     import sys
     sys.path.append(LEMMATIZER_DIR)
     from lemmatizer import findPos
     with open(REVISED_PICKLE, "rb") as f:
         revisedDict = pickle.load(f)
+    log("Загружен Turkish-Lemmatizer.")
 
-    # --- Сборка итогового словаря ---
+    # --- Шаг 4: строим итоговый словарь ---
     lemma_dict = dict()
-    for w, forms in forms_dict.items():
-        # Берём базовую форму как лемму через турецкий лемматизатор (можно вручную заменить, если есть gold-standard)
-        for form in forms:
-            lemma = find_best_lemma(form, findPos, revisedDict)
+    not_recognized = 0
+    for form in all_forms:
+        lemma = lemmatize_with_turkish_lemmatizer(form, findPos, revisedDict)
+        if lemma and lemma != form:
             lemma_dict[form] = lemma
+        elif form in manual_words:
+            lemma_dict[form] = form
+        else:
+            not_recognized += 1
 
-    # --- Сохраняем pkl ---
+    log(f"Итого лемм в словаре: {len(lemma_dict)}")
+    log(f"Не удалось лемматизировать и вручную провалидировать: {not_recognized} слов (они отброшены)")
     with open(PKL_OUT, "wb") as f:
         pickle.dump(lemma_dict, f)
-
-    print(f"Создан словарь {len(lemma_dict)} форма-лемма => {PKL_OUT}")
+    log(f"Сохранено в {PKL_OUT}")
 
 if __name__ == "__main__":
     main()
