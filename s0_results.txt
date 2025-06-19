@@ -126,3 +126,55 @@ Some parameters are on the meta device because they were offloaded to the cpu.
   [RAW RESPONSE]: 'Алдыңда мәтиндин бир сөз бар. Бир сөз билән жавап бер: "е" — әгер бу сөз къырымтатарджа олувса, "йоқ" — әгер бу сөз къырымтатар тилине аит олмаса. Сөз: яратыджылыгъыидаи Жавап: е\n\n</think>\n\nе'
   [POSTPROCESSED]: 'е'
   [QT-WORD]: True
+
+примитивный лемматизатор:
+Слово → Лемма (None, если не крымскотатарское слово):
+
+Бир             → бир
+бир             → бир
+Ай              → ай
+ай              → ай
+коюм            → None
+Коюм            → None
+коюмда          → None
+махульдюрни     → None
+зиярет          → зиярет
+Эттим           → эттим
+борджум         → None
+эди             → эди
+Акъмесджит      → None
+сокъакъларында  → None
+ЯКЪЫНДА         → None
+мектепке        → мектепке
+мектюбинде      → None
+ЮРИП            → None
+отуз            → None
+чакъырым        → чакъырым
+маджлис         → None
+Bir             → bir
+bir             → bir
+Ay              → None
+ay              → None
+koyum           → None
+Koyum           → None
+koyumda         → None
+mahuldürni      → None
+ziyaret         → None
+Ettim           → None
+borcum          → None
+edi             → edi
+Aqmescit        → None
+soqaqlarında    → None
+YAKINDA         → None
+mektepke        → None
+mektubinde      → None
+YURIP           → None
+otuz            → None
+çakırım         → None
+meclis          → None
+Москва          → None
+яблоко          → None
+работает        → None
+AI              → None
+hello           → None
+
