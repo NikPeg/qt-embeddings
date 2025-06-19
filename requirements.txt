@@ -1,0 +1,8 @@
+numpy>=1.23,<1.26
+scipy>=1.10,<1.13
+gensim>=4.3,<5.0
+torch>=2.1.0
+transformers>=4.39,<5.0
+nltk>=3.6
+zeyrek>=0.1.5
+tqdm>=4.64
