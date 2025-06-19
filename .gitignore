@@ -6,3 +6,4 @@ LemmatizedQirimTatarTexts/*
 .idea/vcs.xml
 LemmatizedQirimTatarTexts_Zeyrek/*
 .python-version
+cbow_dataset.txt
